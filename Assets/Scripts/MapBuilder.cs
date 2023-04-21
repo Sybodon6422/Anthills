@@ -19,14 +19,14 @@ public class MapBuilder : MonoBehaviour
         }
 
         DontDestroyOnLoad(this.gameObject);
-
-        LoadMap();
+        BuildTileDataFromCurrentMap();
+        GameBoard.Instance.SetupGameBoard(mapSize, tileData);
     }
     #endregion
 
     [SerializeField] private Tilemap tileMap;
     [SerializeField] private Vector2Int mapSize;
-    public TileBase grassTile, forestTile, waterTile, sandTile, mountainTile;
+    public TileBase wallTile, hollowTile, rockTile;
 
     private Grid.TileType[,] tileData;
 
@@ -38,11 +38,9 @@ public class MapBuilder : MonoBehaviour
             for (int y = 0; y < mapSize.y; y++)
             {
                 var checkTile = tileMap.GetTile(new Vector3Int(x,y,0));
-                if(checkTile == grassTile) { tileData[x,y] = Grid.TileType.grass; }
-                else if(checkTile == forestTile) { tileData[x,y] = Grid.TileType.forest; }
-                else if(checkTile == waterTile) { tileData[x,y] = Grid.TileType.water; }
-                else if(checkTile == sandTile) { tileData[x,y] = Grid.TileType.sand; }
-                else if(checkTile == mountainTile) { tileData[x,y] = Grid.TileType.mountain; }
+                if(checkTile == wallTile) { tileData[x,y] = Grid.TileType.wall; }
+                else if(checkTile == hollowTile) { tileData[x,y] = Grid.TileType.hollow; }
+                else if(checkTile == rockTile) { tileData[x,y] = Grid.TileType.rock; }
             }
         }
 
@@ -66,26 +64,36 @@ public class MapBuilder : MonoBehaviour
 
                 switch (checkTile)
                 {
-                case Grid.TileType.grass:
-                    tileMap.SetTile(currentTilePosition, grassTile);
+                case Grid.TileType.wall:
+                    tileMap.SetTile(currentTilePosition, wallTile);
                     break;
-                case Grid.TileType.forest:
-                    tileMap.SetTile(currentTilePosition, forestTile);
+                case Grid.TileType.hollow:
+                    tileMap.SetTile(currentTilePosition, hollowTile);
                     break;
-                case Grid.TileType.water:
-                    tileMap.SetTile(currentTilePosition, waterTile);
-                    break;
-                case Grid.TileType.sand:
-                    tileMap.SetTile(currentTilePosition, sandTile);
-                    break;
-                case Grid.TileType.mountain:
-                    tileMap.SetTile(currentTilePosition, mountainTile);
+                case Grid.TileType.rock:
+                    tileMap.SetTile(currentTilePosition, rockTile);
                     break;
                 }
             }
         }
 
         FinishMapLoad();
+    }
+
+    private void BuildTileDataFromCurrentMap()
+    {
+        tileData = new Grid.TileType[mapSize.x,mapSize.y];
+        for (int x = 0; x < mapSize.x; x++)
+        {
+            for (int y = 0; y < mapSize.y; y++)
+            {
+                var checkTile = tileMap.GetTile(new Vector3Int(x,y,0));
+                if(checkTile == wallTile) { tileData[x,y] = Grid.TileType.wall; }
+                else if(checkTile == hollowTile) { tileData[x,y] = Grid.TileType.hollow; }
+                else if(checkTile == rockTile) { tileData[x,y] = Grid.TileType.rock; }
+            }
+        }
+
     }
 
     private void FinishMapLoad()

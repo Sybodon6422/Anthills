@@ -63,7 +63,7 @@ public class Grid
 
         public bool IsTileWalkable(Ant unitCaller)
         {
-            if(tile == TileType.grass || tile == TileType.forest || tile == TileType.sand || tile == TileType.road)
+            if(tile == TileType.hollow)
             {
                 return true;
             }else{return false;}
@@ -80,11 +80,8 @@ public class Grid
     [Serializable]
     public enum TileType
     {
-        grass,
-        water,
-        forest,
-        sand,
-        road,
-        mountain
+        wall,
+        hollow,
+        rock
     }
 }
